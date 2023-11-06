@@ -9,10 +9,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login/>} />
-          <Route path="/patient" element={<PatientData/>} />
-        </Routes>
+        <PatientData/>
       </BrowserRouter>
       <ToastContainer />
     </>
