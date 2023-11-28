@@ -5,8 +5,7 @@ import axios from "axios";
 import { Spinner } from "./Spinner";
 // import {ethers} from "ethers";
 
-
-const API_URL = 'https://clean-shrug-fox.cyclic.app//api/v1/pdata';
+const API_URL = "https://clean-shrug-fox.cyclic.app//api/v1/pdata";
 
 const PatientData = () => {
   // const [account, setAccount] = useState("");
@@ -14,45 +13,42 @@ const PatientData = () => {
   const [userData, setUserData] = useState(null);
   const [patientData, setPatientData] = useState("");
   const [isOwner, setIsOwner] = useState(true);
-  const [walletAddress, setWalletAddress] = useState('');
-  const [getWalletAddress, setGetWalletAddress] = useState('');
+  const [walletAddress, setWalletAddress] = useState("");
+  const [getWalletAddress, setGetWalletAddress] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";  //local addre.
 
   const [data, setdata] = useState({
-    address: ""
+    address: "",
   });
 
   const btnhandler = async () => {
     // Asking if metamask is already present or not
-    try{
+    try {
       if (window.ethereum) {
         // res[0] for fetching a first wallet
         await window.ethereum
-        .request({ method: "eth_requestAccounts" })
-        .then((res) =>
-            accountChangeHandler(res[0])
-        )
-        .catch(e => {
-          console.log("error while fetching data ", e);
-        });
-        
+          .request({ method: "eth_requestAccounts" })
+          .then((res) => accountChangeHandler(res[0]))
+          .catch((e) => {
+            console.log("error while fetching data ", e);
+          });
       } else {
-         toast.warn("install Metamask")
+        toast.warn("install Metamask");
       }
-    }catch(err){
-      console.log("Error while requesting account ". err);
+    } catch (err) {
+      console.log("Error while requesting account ".err);
     }
-};
+  };
 
-const accountChangeHandler = (account) => {
-  // Setting an address data
-  setdata({
+  const accountChangeHandler = (account) => {
+    // Setting an address data
+    setdata({
       address: account,
-  });
-  console.log(account)
-};
+    });
+    console.log(account);
+  };
 
   // const getATMContract = () => {
   //   const provider = new ethers.providers.Web3Provider(ethWallet);
@@ -60,62 +56,66 @@ const accountChangeHandler = (account) => {
   //   const atmContract = new ethers.Contract(contractAddress, atmABI, signer);
   // }
 
-  async function insertDataHandler(){
-    if(walletAddress === ''){
-        toast.warn("No wallet address found");
-        return;
+  async function insertDataHandler() {
+    if (walletAddress === "") {
+      toast.warn("No wallet address found");
+      return;
     }
 
-    if(patientData === ''){
-        toast.warn("Please enter patient data");
-        return;
+    if (patientData === "") {
+      toast.warn("Please enter patient data");
+      return;
     }
     setIsLoading(true);
 
-    try{
-
-        const res = await axios.post(API_URL, {
-            patientData:patientData,
-            walletAddress:walletAddress
-        })
-        console.log("res: ", res);
-        if(res.status === 200){
-            toast.success("Data inserted successfully");
-            setPatientData("");
-            setWalletAddress("");
-        }else{
-            toast.error("Unable to insert data");   
-        }
-    }catch(err){
-        console.log("Unable to post data");
+    try {
+      const res = await axios.post(API_URL, {
+        patientData: patientData,
+        walletAddress: walletAddress,
+      });
+      console.log("res: ", res);
+      if (res.status === 200) {
+        toast.success("Data inserted successfully");
+        setPatientData("");
+        setWalletAddress("");
+      } else {
         toast.error("Unable to insert data");
+      }
+    } catch (err) {
+      console.log("Unable to post data");
+      toast.error("Unable to insert data");
     }
     setIsLoading(false);
   }
 
-  async function getDataHandler(){
-    if(getWalletAddress === ''){
-        toast.warn("Please enter wallet address");
-        return;
+  async function getDataHandler() {
+    if (getWalletAddress === "") {
+      toast.warn("Please enter wallet address");
+      return;
     }
     setIsLoading(true);
-    try{
-        const res = await axios.get(API_URL, {
-            params:{
-                walletAddress: getWalletAddress
-            }
-        })
+    try {
+      const res = await axios.get(API_URL, {
+        params: {
+          walletAddress: getWalletAddress,
+        },
+      });
 
-        if(res.status === 200){
-            setUserData(res.data.data[0]);
-        }else{
-            setUserData("-");
-            toast.error("No data found!");
+      if (res.status === 200) {
+        if (res.data && res.data.data && res.data.data.length) {
+          setUserData(res.data.data[0]);
+        } else {
+          toast.warn("No data found!");
+          setUserData(null);
         }
-    }catch(err){
+      } else {
+        toast.warn("No data found!");
         setUserData(null);
-        console.log("Error while getting patient data");
-        toast.error("Errow while getting patient data");
+      }
+    } catch (err) {
+      setUserData(null);
+      console.log("Error while getting patient data");
+      toast.error("Errow while getting patient data");
     }
     setIsLoading(false);
   }
@@ -125,9 +125,7 @@ const accountChangeHandler = (account) => {
 
   return (
     <div className="relative h-screen w-screen">
-        {
-            isLoading && <Spinner/>
-        }
+      {isLoading && <Spinner />}
       <img
         src={image}
         alt="Background Image"
@@ -139,16 +137,22 @@ const accountChangeHandler = (account) => {
           <p className="text-md text-gray-500 font-semibold">
             Your Wallet Address: {data.address}
           </p>
-          {isOwner && <p className="text-sm text-green-500">You are the owner.</p>}
-          <button className={`w-40 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded
-            ${data.address != '' ? "disabled:opacity-70" : ""}
+          {isOwner && (
+            <p className="text-sm text-green-500">You are the owner.</p>
+          )}
+          <button
+            className={`w-40 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded
+            ${data.address != "" ? "disabled:opacity-70" : ""}
           `}
-          disabled={true}
-          onClick={btnhandler}>
-              { data.address === '' ? 'Connect Wallet' : 'Connected'}
-            </button>
+            disabled={true}
+            onClick={btnhandler}
+          >
+            {data.address === "" ? "Connect Wallet" : "Connected"}
+          </button>
           <div className="mt-4">
-            <h2 className="text-2xl font-bold mb-4">Insert Data (Owner Only)</h2>
+            <h2 className="text-2xl font-bold mb-4">
+              Insert Data (Owner Only)
+            </h2>
             <div className="flex items-center mb-4">
               <h2 className="text-md text-gray-500 font-bold mb-4 mr-4">
                 Patient Wallet Address:{" "}
@@ -199,23 +203,25 @@ const accountChangeHandler = (account) => {
             >
               Get Data
             </button>
-            {
-                userData && userData==="-" ? 
-                (<p className="text-lg font-semibold text-red-600">
-                    No data found
-                </p>)
-                :
-                (
-                <p className="text-md text-gray-500 mt-3">
-                  <p>Patient Data: {userData?.patientData && userData.patientData}</p>
-                  <p>Created at: {userData?.createdAt && 
-                    (new Date(userData.createdAt).toString()).slice(4)}</p>
+            {userData && (
+              <p className="text-md text-gray-500 mt-3">
+                <p>
+                  Patient Data: {userData?.patientData && userData.patientData}
                 </p>
-                )
-            }
+                <p>
+                  Created at:{" "}
+                  {userData?.createdAt &&
+                    new Date(userData.createdAt).toString().slice(4)}
+                </p>
+              </p>
+            )}
+            {/* {!userData && (
+              <p className="text-lg font-semibold text-red-600">
+                No data found
+              </p>
+            )} */}
           </div>
         </div>
-
       </div>
     </div>
   );
