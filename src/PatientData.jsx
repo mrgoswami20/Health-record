@@ -39,7 +39,7 @@ const PatientData = () => {
         });
         
       } else {
-          alert("install metamask extension!!");
+         toast.warn("install Metamask")
       }
     }catch(err){
       console.log("Error while requesting account ". err);
@@ -109,7 +109,7 @@ const accountChangeHandler = (account) => {
         if(res.status === 200){
             setUserData(res.data.data[0]);
         }else{
-            setUserData(null);
+            setUserData("-");
             toast.error("No data found!");
         }
     }catch(err){
@@ -200,7 +200,7 @@ const accountChangeHandler = (account) => {
               Get Data
             </button>
             {
-                !userData ? 
+                userData && userData==="-" ? 
                 (<p className="text-lg font-semibold text-red-600">
                     No data found
                 </p>)
